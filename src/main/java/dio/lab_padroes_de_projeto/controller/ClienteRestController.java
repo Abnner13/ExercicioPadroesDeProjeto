@@ -1,10 +1,10 @@
 package dio.lab_padroes_de_projeto.controller;
 
-
 import dio.lab_padroes_de_projeto.model.Cliente;
 import dio.lab_padroes_de_projeto.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +15,10 @@ public class ClienteRestController {
 
     @Autowired
     private ClienteService clienteService;
+
+    @Autowired
+    private PasswordEncoder encoder;
+
 
     @GetMapping
     public ResponseEntity<Iterable<Cliente>> buscarTodos() {
@@ -28,6 +32,8 @@ public class ClienteRestController {
 
     @PostMapping
     public ResponseEntity<Cliente> inserir(@RequestBody Cliente cliente) {
+        cliente.setId(null);
+        cliente.setPassword(encoder.encode(cliente.getPassword()));
         clienteService.inserir(cliente);
         return ResponseEntity.ok(cliente);
     }
